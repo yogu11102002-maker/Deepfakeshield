@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+Werkzeug
+requests
+python-dotenv
+Pillow
+opencv-python-headless
+moviepy
+joblib
+scikit-learn
+matplotlib

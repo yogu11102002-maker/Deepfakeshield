@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFake Shield - Analyze Content</title>
+       <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>DeepFake Shield</span>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="{{ url_for('dashboard') }}">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('analyze') }}" class="active">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Analyze Content
+        </a>
+
+        <a href="{{ url_for('history') }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            History
+        </a>
+
+        <a href="{{ url_for('reports') }}">
+            <i class="fa-solid fa-file-shield"></i>
+            Reports
+        </a>
+
+        <a href="{{ url_for('settings') }}">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+    </div>
+
+    <div class="sidebar-bottom">
+        <a href="{{ url_for('home') }}">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="#" id="logoutLink">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="dashboard-main">
+
+    <!-- TOPBAR -->
+    <header class="dashboard-header">
+        <div>
+            <h1>Analyze Content</h1>
+            <p>Upload images or paste text for AI-powered deepfake detection.</p>
+        </div>
+
+        <div class="profile">
+            <div class="profile-icon">
+                {{ user.name[0].upper() }}
+            </div>
+
+            <div>
+                <strong>{{ user.name }}</strong>
+                <small>Secure Account</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- ANALYSIS SECTION -->
+    <section class="analysis-section">
+
+        <!-- TABS -->
+        <div class="analysis-tabs">
+            <button class="tab-btn active" data-tab="image-tab">
+                <i class="fa-solid fa-image"></i>
+                Analyze Image
+            </button>
+            <button class="tab-btn" data-tab="video-tab">
+                <i class="fa-solid fa-video"></i>
+                Analyze Video
+            </button>
+            <button class="tab-btn" data-tab="audio-tab">
+                <i class="fa-solid fa-microphone"></i>
+                Analyze Audio
+            </button>
+            <button class="tab-btn" data-tab="text-tab">
+                <i class="fa-solid fa-file-lines"></i>
+                Analyze Text
+            </button>
+        </div>
+
+        <!-- IMAGE TAB -->
+        <div id="image-tab" class="tab-content active">
+            <div class="analysis-header">
+                <h2>Upload Image</h2>
+                <p>Detect AI-generated or manipulated images using deep learning analysis.</p>
+            </div>
+
+            <div class="upload-area large">
+                <div class="upload-icon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+
+                <h3>Drag & drop your image here</h3>
+                <p>Or click to browse</p>
+
+                <input type="file" id="imageInput" hidden accept="image/*">
+
+                <button class="upload-btn" type="button" onclick="document.getElementById('imageInput').click()">
+                    <i class="fa-solid fa-upload"></i>
+                    Choose Image
+                </button>
+
+                <span id="imageName">Supported: JPG, PNG, GIF</span>
+            </div>
+
+            <!-- IMAGE PREVIEW -->
+            <div id="imagePreview" class="image-preview" style="display:none;">
+                <img id="previewImg" src="" alt="Preview">
+                <button type="button" class="remove-btn" onclick="clearImageInput()">
+                    <i class="fa-solid fa-x"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- TEXT TAB -->
+        <div id="text-tab" class="tab-content">
+            <div class="analysis-header">
+                <h2>Analyze Text</h2>
+                <p>Check if text is AI-generated using natural language processing.</p>
+            </div>
+
+            <div class="text-analyze-box large">
+                <label for="textInput">Paste your text here</label>
+                <textarea 
+                    id="textInput" 
+                    rows="8"
+                    placeholder="Enter a message, email, paragraph, or any text you want to analyze..."></textarea>
+                <!-- <small>Min 20 characters</small> -->
+            </div>
+        </div>
+
+        <!-- VIDEO TAB -->
+        <div id="video-tab" class="tab-content">
+            <div class="analysis-header">
+                <h2>Upload Video</h2>
+                <p>We sample a few frames across the video and run each one through the image detection model.</p>
+            </div>
+
+            <div class="upload-area large">
+                <div class="upload-icon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+
+                <h3>Drag & drop your video here</h3>
+                <p>Or click to browse</p>
+
+                <input type="file" id="videoInput" hidden accept="video/*">
+
+                <button class="upload-btn" type="button" onclick="document.getElementById('videoInput').click()">
+                    <i class="fa-solid fa-upload"></i>
+                    Choose Video
+                </button>
+
+                <span id="videoName">Supported: MP4, MOV, WEBM &middot; may take a bit longer to analyze</span>
+            </div>
+        </div>
+
+        <!-- AUDIO TAB -->
+        <div id="audio-tab" class="tab-content">
+            <div class="analysis-header">
+                <h2>Upload Audio</h2>
+                <p>Detect AI-generated or cloned voices in an audio clip.</p>
+            </div>
+
+            <div class="upload-area large">
+                <div class="upload-icon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+
+                <h3>Drag & drop your audio here</h3>
+                <p>Or click to browse</p>
+
+                <input type="file" id="audioInput" hidden accept="audio/*">
+
+                <button class="upload-btn" type="button" onclick="document.getElementById('audioInput').click()">
+                    <i class="fa-solid fa-upload"></i>
+                    Choose Audio
+                </button>
+
+                <span id="audioName">Supported: MP3, WAV, M4A</span>
+            </div>
+        </div>
+
+        <!-- ANALYZE BUTTON -->
+        <button class="upload-btn analyze-btn large" type="button" id="analyzeBtn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Run Analysis
+        </button>
+
+        <!-- RESULT PANEL -->
+        <div id="resultPanel" class="result-panel" hidden>
+            <div class="result-header">
+                <div id="resultIcon" class="result-icon"></div>
+                <div>
+                    <p id="resultLabel" class="result-label"></p>
+                    <p id="resultConfidence" class="result-confidence"></p>
+                </div>
+            </div>
+
+            <div class="result-details">
+                <p id="resultMessage" class="result-message"></p>
+            </div>
+
+            <button class="btn-secondary" onclick="location.reload()">
+                <i class="fa-solid fa-arrow-rotate-right"></i>
+                Analyze Another
+            </button>
+        </div>
+
+    </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const tabName = this.dataset.tab;
+        
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        
+        document.getElementById(tabName).classList.add('active');
+        this.classList.add('active');
+    });
+});
+
+// Image preview
+const imageInput = document.getElementById('imageInput');
+const previewImg = document.getElementById('previewImg');
+const imagePreview = document.getElementById('imagePreview');
+const imageName = document.getElementById('imageName');
+
+if (imageInput) {
+    imageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                imageName.textContent = 'Selected: ' + imageInput.files[0].name;
+            };
+            reader.readAsDataURL(this.files[0]);
+            
+            const textBox = document.getElementById('textInput');
+            if (textBox) textBox.value = '';
+        }
+    });
+}
+
+function clearImageInput() {
+    imageInput.value = '';
+    imagePreview.style.display = 'none';
+    imageName.textContent = 'Supported: JPG, PNG, GIF';
+}
+
+// Video / Audio filename echo + clear other inputs when one is chosen
+
+const videoInput = document.getElementById('videoInput');
+const videoName = document.getElementById('videoName');
+
+if (videoInput) {
+    videoInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            videoName.textContent = 'Selected: ' + this.files[0].name;
+
+            const textBox = document.getElementById('textInput');
+            if (textBox) textBox.value = '';
+            if (imageInput) imageInput.value = '';
+            if (imagePreview) imagePreview.style.display = 'none';
+        }
+    });
+}
+
+const audioInput = document.getElementById('audioInput');
+const audioName = document.getElementById('audioName');
+
+if (audioInput) {
+    audioInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            audioName.textContent = 'Selected: ' + this.files[0].name;
+
+            const textBox = document.getElementById('textInput');
+            if (textBox) textBox.value = '';
+            if (imageInput) imageInput.value = '';
+            if (imagePreview) imagePreview.style.display = 'none';
+        }
+    });
+}
+
+// Drag and drop
+const uploadArea = document.querySelector('.upload-area');
+if (uploadArea) {
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#3B82F6';
+        uploadArea.style.backgroundColor = 'rgba(59, 130, 246, 0.05)';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '#E5E7EB';
+        uploadArea.style.backgroundColor = 'transparent';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#E5E7EB';
+        uploadArea.style.backgroundColor = 'transparent';
+        
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            imageInput.files = e.dataTransfer.files;
+            const event = new Event('change', { bubbles: true });
+            imageInput.dispatchEvent(event);
+        }
+    });
+}
+</script>
+
+</body>
+
+</html>

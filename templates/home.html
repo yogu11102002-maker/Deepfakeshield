@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DeepFake Shield</title>
+
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="nav-logo">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>DeepFake Shield</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="{{ url_for('dashboard') }}" class="nav-login">Dashboard</a>
+            <a href="{{ url_for('signup') }}" class="nav-signup">Get Started</a>
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <i class="fa-solid fa-shield-halved"></i>
+                AI Powered Security
+            </div>
+
+            <h1>
+                Detect DeepFakes.<br>
+                <span>Protect Digital Trust.</span>
+            </h1>
+
+            <p>
+                DeepFake Shield is a multi-modal AI platform that
+                detects manipulated images, videos, audio and text
+                to help protect digital identities.
+            </p>
+
+            <div class="hero-buttons">
+                
+                
+                <a href="{{ url_for('signup') }}" class="primary-btn">
+                    Get Started
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+                <a href="#features" class="secondary-btn">
+                    Explore Features
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-visual">
+
+            <div class="scan-card">
+
+                <div class="scan-icon">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+
+                <h3>AI Verification</h3>
+
+                <p>
+                    Multi-modal content analysis
+                </p>
+
+                <div class="scan-line"></div>
+
+                <div class="security-status">
+                    <i class="fa-solid fa-circle-check"></i>
+                    System Ready
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+
+    <section class="features-section" id="features">
+
+    <div class="section-heading">
+
+        <p>WHAT WE DETECT</p>
+
+        <h2>One Platform. Multiple Threats.</h2>
+
+        <span>
+            Advanced AI models analyze different types of
+            digital content for manipulation.
+        </span>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+        <!-- IMAGE -->
+        <a href="{{ url_for('dashboard') }}" class="feature-card">
+
+            <i class="fa-solid fa-image"></i>
+
+            <h3>Image Detection</h3>
+
+            <p>
+                Identify AI-generated and manipulated images
+                using deep learning based visual analysis.
+            </p>
+
+        </a>
+
+
+        <!-- VIDEO -->
+        <a href="{{ url_for('dashboard') }}" class="feature-card">
+
+            <i class="fa-solid fa-video"></i>
+
+            <h3>Video Detection</h3>
+
+            <p>
+                Analyze facial movements and temporal patterns
+                to identify manipulated video content.
+            </p>
+
+        </a>
+
+
+        <!-- VOICE -->
+        <a href="{{ url_for('dashboard') }}" class="feature-card">
+
+            <i class="fa-solid fa-microphone"></i>
+
+            <h3>Voice Detection</h3>
+
+            <p>
+                Analyze audio characteristics to detect
+                synthetic and manipulated voices.
+            </p>
+
+        </a>
+
+
+        <!-- TEXT -->
+        <a href="{{ url_for('dashboard') }}" class="feature-card">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+            <h3>Text Analysis</h3>
+
+            <p>
+                Analyze suspicious text using natural language
+                processing techniques.
+            </p>
+
+        </a>
+
+    </div>
+
+</section>
+
+    <!-- HOW IT WORKS -->
+
+    <section class="split-section alt-bg" id="how-it-works">
+
+        <div class="split-grid">
+
+            <div class="split-content">
+
+                <div class="split-eyebrow-line"></div>
+
+                <h2>How It Works</h2>
+
+                <div class="split-list">
+
+                    <div class="split-item">
+                        <div class="split-item-icon"><i class="fa-solid fa-user-shield"></i></div>
+                        <div>
+                            <h3>Real-Time Detection</h3>
+                            <p>
+                                Upload any image, video, audio clip or text and get an
+                                instant AI-powered verdict, so manipulated content gets
+                                flagged before it spreads.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="split-item">
+                        <div class="split-item-icon"><i class="fa-solid fa-layer-group"></i></div>
+                        <div>
+                            <h3>Seamless Analysis Workflow</h3>
+                            <p>
+                                One simple dashboard handles every content type — no
+                                complex setup, no switching tools, just upload and
+                                review the result.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="split-item">
+                        <div class="split-item-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                        <div>
+                            <h3>Cutting-Edge AI Models</h3>
+                            <p>
+                                Powered by deep learning models trained specifically to
+                                catch deepfakes and AI-generated content that
+                                conventional checks miss.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="split-visual">
+                <div class="split-visual-core"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="split-badge circle top-right"><i class="fa-solid fa-lock"></i></div>
+                <div class="split-badge circle outline bottom-left"><i class="fa-solid fa-gear"></i></div>
+                <div class="split-badge square bottom-right"><i class="fa-solid fa-id-card"></i></div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+
+    <section class="split-section" id="about">
+
+        <div class="split-grid reverse">
+
+            <div class="split-content">
+
+                <div class="split-eyebrow-line"></div>
+
+                <h2>Building a Safer Digital World with AI</h2>
+
+                <p>
+                    DeepFake Shield combines multiple AI models to evaluate digital
+                    content and generate an overall risk assessment.
+                </p>
+
+                <div class="split-list">
+
+                    <div class="split-item">
+                        <div class="split-item-icon"><i class="fa-solid fa-diagram-project"></i></div>
+                        <div>
+                            <h3>Multi-Modal Analysis</h3>
+                            <p>Image, video, audio and text are each checked by a model built for that format.</p>
+                        </div>
+                    </div>
+
+                    <div class="split-item">
+                        <div class="split-item-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <div>
+                            <h3>AI-Based Risk Evaluation</h3>
+                            <p>Every result comes with a confidence score, not just a flat yes/no answer.</p>
+                        </div>
+                    </div>
+
+                    <div class="split-item">
+                        <div class="split-item-icon"><i class="fa-solid fa-lock"></i></div>
+                        <div>
+                            <h3>Secure Verification Workflow</h3>
+                            <p>Accounts, uploads and history stay private to each signed-in user.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="split-visual">
+                <div class="split-visual-core"><i class="fa-solid fa-user-shield"></i></div>
+                <div class="split-badge circle top-left"><i class="fa-solid fa-check"></i></div>
+                <div class="split-badge circle outline top-right"><i class="fa-solid fa-video"></i></div>
+                <div class="split-badge square bottom-right"><i class="fa-solid fa-microphone"></i></div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div>
+            <i class="fa-solid fa-shield-halved"></i>
+            DeepFake Shield
+        </div>
+
+        <p>
+            AI-powered digital content verification.
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

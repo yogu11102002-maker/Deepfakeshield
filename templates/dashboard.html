@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>DeepFake Shield - Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body class="dashboard-body">
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-logo">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        <span>DeepFake Shield</span>
+
+    </div>
+
+
+    <div class="sidebar-menu">
+
+         <a href="{{ url_for('dashboard') }}" class="active">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('analyze') }}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Analyze Content
+        </a>
+
+         <a href="{{ url_for('history') }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            History
+        </a>
+
+        <a href="{{ url_for('reports') }}">
+            <i class="fa-solid fa-file-shield"></i>
+            Reports
+        </a>
+
+        <a href="{{ url_for('settings') }}">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+
+    </div>
+
+
+    <div class="sidebar-bottom">
+
+        <a href="{{ url_for('home') }}">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="#" id="logoutLink">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="dashboard-main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>Dashboard</h1>
+
+            <p>
+                Welcome back! Analyze your digital content.
+            </p>
+
+        </div>
+
+
+        <div class="profile">
+
+            <div class="profile-icon">
+                {{ user.name[0].upper() }}
+            </div>
+
+            <div>
+
+                <strong>{{ user.name }}</strong>
+
+                <small>
+                    Secure Account
+                </small>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- STAT CARDS -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                <i class="fa-solid fa-file-shield"></i>
+            </div>
+
+            <div>
+
+                <p>Total Analyses</p>
+
+                <h2 id="statTotal">{{ total }}</h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div>
+
+                <p>Safe Content</p>
+
+                <h2 id="statSafe">{{ safe }}</h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon red">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div>
+
+                <p>Threats Detected</p>
+
+                <h2 id="statThreats">{{ threats }}</h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                <i class="fa-solid fa-shield"></i>
+            </div>
+
+            <div>
+
+                <p>Protection Score</p>
+
+                <h2 id="statScore">{{ protection_score }}%</h2>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ANALYSIS -->
+
+    <section class="analysis-section">
+
+
+        <div class="analysis-header">
+
+            <div>
+
+                <h2>Analyze Content</h2>
+
+                <p>
+                    Upload an image or paste some text for AI-powered analysis.
+                    (Video &amp; audio support is coming in a later phase.)
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="upload-area">
+
+            <div class="upload-icon">
+
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+            </div>
+
+
+            <h3>
+                Upload your file
+            </h3>
+
+
+            <p>
+                Drag &amp; drop your image here or browse
+            </p>
+
+
+            <input
+                type="file"
+                id="fileInput"
+                hidden
+                accept="image/*">
+
+
+            <button
+                class="upload-btn"
+                type="button"
+                onclick="document.getElementById('fileInput').click()">
+
+                <i class="fa-solid fa-upload"></i>
+
+                Choose File
+
+            </button>
+
+
+            <span id="fileName">
+                Supported: JPG, PNG
+            </span>
+
+        </div>
+
+
+        <!-- TEXT INPUT -->
+
+        <div class="text-analyze-box">
+
+            <label for="textInput">Or paste text to check if it's AI-generated</label>
+
+            <textarea
+                id="textInput"
+                rows="3"
+                placeholder="Paste a message, email, or paragraph here..."></textarea>
+
+        </div>
+
+
+        <button class="upload-btn analyze-btn" type="button" id="analyzeBtn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Run Analysis
+        </button>
+
+
+        <!-- RESULT PANEL (hidden until a result comes back) -->
+
+        <div id="resultPanel" class="result-panel" hidden>
+            <div id="resultIcon" class="result-icon"></div>
+            <div>
+                <p id="resultLabel" class="result-label"></p>
+                <p id="resultConfidence" class="result-confidence"></p>
+            </div>
+        </div>
+
+
+    </section>
+
+
+    <!-- RECENT ACTIVITY -->
+
+    <section class="recent-section">
+
+        <div class="recent-header">
+
+            <h2>Recent Analysis</h2>
+
+            <a href="#">
+                View All
+            </a>
+
+        </div>
+
+
+        {% if recent %}
+
+            <div class="recent-list">
+
+                {% for item in recent %}
+
+                <div class="recent-item">
+
+                    <div class="recent-item-icon {{ 'threat' if item.is_threat else 'safe' }}">
+                        <i class="fa-solid {{ 'fa-triangle-exclamation' if item.is_threat else 'fa-circle-check' }}"></i>
+                    </div>
+
+                    <div class="recent-item-body">
+                        <strong>{{ item.source_name }}</strong>
+                        <small>{{ item.content_type|capitalize }} &middot; {{ item.label }} &middot; {{ item.confidence }}% confidence</small>
+                    </div>
+
+                    <span class="recent-item-time">
+                        {{ item.created_at.strftime('%d %b, %H:%M') }}
+                    </span>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-folder-open"></i>
+
+                <h3>
+                    No analysis yet
+                </h3>
+
+                <p>
+                    Upload your first file to start detecting
+                    deepfake content.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+</main>
+
+
+<script src="{{url_for('static', filename='js/script.js')}}"></script>
+
+
+</body>
+
+</html>

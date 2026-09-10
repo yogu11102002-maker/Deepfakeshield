@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DeepFake Shield - Sign Up</title>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body>
+
+<div class="login-container">
+
+    <!-- LEFT -->
+
+    <div class="left-panel">
+
+        <div class="brand">
+
+            <div class="shield-logo">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <span>DeepFake Shield</span>
+
+        </div>
+
+
+        <h1>
+            Create Your<br>
+            Secure Account
+        </h1>
+
+
+        <p class="tagline">
+
+            Join the intelligent platform
+            for digital content verification.
+
+        </p>
+
+
+        <p class="trusted">
+            SECURE • INTELLIGENT • RELIABLE
+        </p>
+
+    </div>
+
+
+    <!-- RIGHT -->
+
+    <div class="right-panel">
+
+        <div class="login-box signup-box">
+
+            <h2>Create account</h2>
+
+            <p class="subtitle">
+                Enter your details below
+            </p>
+
+
+            <form id="signupForm">
+
+
+                <div class="input-group">
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Full Name *"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <input
+                        type="email"
+                        id="signupEmail"
+                        placeholder="Email *"
+                        required>
+
+                </div>
+
+
+                <div class="input-group password-group">
+
+                    <input
+                        type="password"
+                        id="signupPassword"
+                        placeholder="Password *"
+                        required>
+
+                    <i
+                        class="fa-regular fa-eye toggle-password"
+                        onclick="togglePassword('signupPassword', this)">
+                    </i>
+
+                </div>
+
+
+                <div class="input-group password-group">
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm Password *"
+                        required>
+
+                    <i
+                        class="fa-regular fa-eye toggle-password"
+                        onclick="togglePassword('confirmPassword', this)">
+                    </i>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="login-btn">
+
+                    Create Account
+
+                </button>
+
+            </form>
+
+
+            <div class="links signup-links">
+
+                <span>Already have an account?</span>
+
+                <a href="login.html">
+                    Login
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="{{url_for('static', filename='js/script.js')}}"></script>
+
+</body>
+
+</html>

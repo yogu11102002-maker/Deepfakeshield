@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFake Shield - Reports</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>DeepFake Shield</span>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="{{ url_for('dashboard') }}">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('analyze') }}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Analyze Content
+        </a>
+
+        <a href="{{ url_for('history') }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            History
+        </a>
+
+        <a href="{{ url_for('reports') }}" class="active">
+            <i class="fa-solid fa-file-shield"></i>
+            Reports
+        </a>
+
+        <a href="{{ url_for('settings') }}">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+    </div>
+
+    <div class="sidebar-bottom">
+        <a href="{{ url_for('home') }}">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="#" id="logoutLink">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="dashboard-main">
+
+    <!-- TOPBAR -->
+    <header class="dashboard-header">
+        <div>
+            <h1>Reports & Analytics</h1>
+            <p>View your analysis summary and download reports.</p>
+        </div>
+
+        <div class="profile">
+            <div class="profile-icon">
+                {{ user.name[0].upper() }}
+            </div>
+
+            <div>
+                <strong>{{ user.name }}</strong>
+                <small>Secure Account</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- STATS CARDS -->
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fa-solid fa-file-shield"></i>
+            </div>
+            <div>
+                <p>Total Analyses</p>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <p>Safe Content</p>
+                <h2>{{ safe }}</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <p>Threats Detected</p>
+                <h2>{{ threats }}</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fa-solid fa-percent"></i>
+            </div>
+            <div>
+                <p>Avg Confidence</p>
+                <h2>{{ avg_confidence }}%</h2>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- BREAKDOWN CARDS -->
+    <section class="breakdown-section">
+
+        <div class="breakdown-card">
+            <div class="breakdown-icon image">
+                <i class="fa-solid fa-image"></i>
+            </div>
+            <div>
+                <h3>Image Analyses</h3>
+                <p>{{ image_count }} images analyzed</p>
+            </div>
+        </div>
+
+        <div class="breakdown-card">
+            <div class="breakdown-icon text">
+                <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <div>
+                <h3>Text Analyses</h3>
+                <p>{{ text_count }} texts analyzed</p>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- DOWNLOAD SECTION -->
+    <section class="download-section">
+
+        <div class="download-card">
+            <div class="download-header">
+                <h2>Download Report</h2>
+                <p>Export all your analysis data as CSV for further review.</p>
+            </div>
+
+            <button class="upload-btn" onclick="downloadReport()">
+                <i class="fa-solid fa-download"></i>
+                Download CSV Report
+            </button>
+        </div>
+
+    </section>
+
+    <!-- DETAILED ANALYSIS TABLE -->
+    <section class="detailed-section">
+
+        <h2>Detailed Analysis Records</h2>
+
+        {% if analyses %}
+
+            <div class="analysis-table-wrapper">
+                <table class="analysis-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Source</th>
+                            <th>Result</th>
+                            <th>Confidence</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in analyses %}
+                        <tr class="{{ 'threat-row' if item.is_threat else 'safe-row' }}">
+                            <td>{{ item.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                            <td>
+                                <span class="badge">{{ item.content_type|capitalize }}</span>
+                            </td>
+                            <td>{{ item.source_name[:50] }}</td>
+                            <td>{{ item.label }}</td>
+                            <td>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: {{ item.confidence }}%"></div>
+                                </div>
+                                {{ item.confidence }}%
+                            </td>
+                            <td>
+                                {% if item.is_threat %}
+                                    <span class="status-badge threat">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        Threat
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge safe">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        Safe
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>No data to report</h3>
+                <p>Start analyzing content to generate reports.</p>
+                <a href="{{ url_for('analyze') }}" class="upload-btn">
+                    <i class="fa-solid fa-upload"></i>
+                    Analyze Now
+                </a>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<script>
+function downloadReport() {
+    window.location.href = '{{ url_for("download_csv") }}';
+}
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFake Shield - Settings</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>DeepFake Shield</span>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="{{ url_for('dashboard') }}">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('analyze') }}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Analyze Content
+        </a>
+
+        <a href="{{ url_for('history') }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            History
+        </a>
+
+        <a href="{{ url_for('reports') }}">
+            <i class="fa-solid fa-file-shield"></i>
+            Reports
+        </a>
+
+        <a href="{{ url_for('settings') }}" class="active">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+    </div>
+
+    <div class="sidebar-bottom">
+        <a href="{{ url_for('home') }}">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="#" id="logoutLink">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="dashboard-main">
+
+    <!-- TOPBAR -->
+    <header class="dashboard-header">
+        <div>
+            <h1>Settings</h1>
+            <p>Manage your account and preferences.</p>
+        </div>
+
+        <div class="profile">
+            <div class="profile-icon">
+                {{ user.name[0].upper() }}
+            </div>
+
+            <div>
+                <strong>{{ user.name }}</strong>
+                <small>Secure Account</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- SETTINGS SECTIONS -->
+    <section class="settings-section">
+
+        <!-- PROFILE SETTINGS -->
+        <div class="settings-card">
+            <div class="settings-header">
+                <i class="fa-solid fa-user"></i>
+                <h2>Profile Information</h2>
+            </div>
+
+            <form id="profileForm">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="profileName" value="{{ user.name }}" placeholder="Your name">
+                </div>
+
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" value="{{ user.email }}" disabled placeholder="Your email">
+                    <small>Email cannot be changed</small>
+                </div>
+
+                <div class="input-group">
+                    <label>Member Since</label>
+                    <input type="text" value="{{ user.created_at.strftime('%d %B %Y') }}" disabled>
+                </div>
+
+                <button type="submit" class="upload-btn">
+                    <i class="fa-solid fa-save"></i>
+                    Save Changes
+                </button>
+            </form>
+        </div>
+
+        <!-- PASSWORD SETTINGS -->
+        <div class="settings-card">
+            <div class="settings-header">
+                <i class="fa-solid fa-lock"></i>
+                <h2>Change Password</h2>
+            </div>
+
+            <form id="passwordForm">
+                <div class="input-group password-group">
+                    <label>Current Password</label>
+                    <input type="password" id="oldPassword" placeholder="Enter current password" required>
+                    <i class="fa-regular fa-eye toggle-password" onclick="togglePassword('oldPassword', this)"></i>
+                </div>
+
+                <div class="input-group password-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password" required>
+                    <i class="fa-regular fa-eye toggle-password" onclick="togglePassword('newPassword', this)"></i>
+                </div>
+
+                <div class="input-group password-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+                    <i class="fa-regular fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
+                </div>
+
+                <button type="submit" class="upload-btn">
+                    <i class="fa-solid fa-key"></i>
+                    Update Password
+                </button>
+            </form>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="settings-card danger-zone">
+            <div class="settings-header">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h2>Danger Zone</h2>
+            </div>
+
+            <p>Once you delete your account, there is no going back. Please be certain.</p>
+
+            <button type="button" class="btn-danger" onclick="confirmDeleteAccount()">
+                <i class="fa-solid fa-trash"></i>
+                Delete Account
+            </button>
+        </div>
+
+    </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+</body>
+
+</html>

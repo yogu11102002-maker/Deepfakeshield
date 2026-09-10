@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFake Shield - History</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>DeepFake Shield</span>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="{{ url_for('dashboard') }}">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('analyze') }}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Analyze Content
+        </a>
+
+        <a href="{{ url_for('history') }}" class="active">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            History
+        </a>
+
+        <a href="{{ url_for('reports') }}">
+            <i class="fa-solid fa-file-shield"></i>
+            Reports
+        </a>
+
+        <a href="{{ url_for('settings') }}">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+    </div>
+
+    <div class="sidebar-bottom">
+        <a href="{{ url_for('home') }}">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="#" id="logoutLink">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="dashboard-main">
+
+    <!-- TOPBAR -->
+    <header class="dashboard-header">
+        <div>
+            <h1>Analysis History</h1>
+            <p>View all your previous analyses and results.</p>
+        </div>
+
+        <div class="profile">
+            <div class="profile-icon">
+                {{ user.name[0].upper() }}
+            </div>
+
+            <div>
+                <strong>{{ user.name }}</strong>
+                <small>Secure Account</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- FILTERS -->
+    <section class="filters-section">
+        <div class="filter-group">
+            <label for="typeFilter">Content Type:</label>
+            <select id="typeFilter" onchange="applyFilters()">
+                <option value="all">All Types</option>
+                <option value="image">Images Only</option>
+                <option value="text">Text Only</option>
+                <option value="video">Video Only</option>
+                <option value="audio">Audio Only</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="threatFilter">Status:</label>
+            <select id="threatFilter" onchange="applyFilters()">
+                <option value="all">All</option>
+                <option value="threat">Threats Only</option>
+                <option value="safe">Safe Only</option>
+            </select>
+        </div>
+
+        <button class="btn-secondary" onclick="resetFilters()">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            Reset Filters
+        </button>
+    </section>
+
+    <!-- HISTORY LIST -->
+    <section class="history-section">
+
+        {% if analyses %}
+
+            <div class="history-list">
+
+                {% for item in analyses %}
+
+                <div class="history-card {{ 'threat' if item.is_threat else 'safe' }}">
+
+                    <!-- Thumbnail (for images) -->
+                    {% if item.content_type == 'image' and item.image_path %}
+                    <div class="history-thumbnail">
+                        <img src="{{ item.image_path }}" alt="Analysis">
+                    </div>
+                    {% else %}
+                    <div class="history-icon {{ 'threat' if item.is_threat else 'safe' }}">
+                        {% if item.content_type == 'image' %}
+                            <i class="fa-solid fa-image"></i>
+                        {% elif item.content_type == 'video' %}
+                            <i class="fa-solid fa-video"></i>
+                        {% elif item.content_type == 'audio' %}
+                            <i class="fa-solid fa-microphone"></i>
+                        {% else %}
+                            <i class="fa-solid fa-file-lines"></i>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Content -->
+                    <div class="history-content">
+                        <div class="history-header">
+                            <h3>{{ item.source_name[:60] }}</h3>
+                            <span class="content-type">{{ item.content_type|capitalize }}</span>
+                        </div>
+
+                        <div class="history-details">
+                            <p><strong>Result:</strong> {{ item.label }}</p>
+                            <p><strong>Confidence:</strong> {{ item.confidence }}%</p>
+                            <p><strong>Date:</strong> {{ item.created_at.strftime('%d %b %Y, %H:%M') }}</p>
+                        </div>
+
+                        <div class="history-status">
+                            {% if item.is_threat %}
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>Potential Threat</span>
+                            {% else %}
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Safe Content</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <i class="fa-solid fa-folder-open"></i>
+                <h3>No analyses yet</h3>
+                <p>Upload your first file to start detecting deepfake content.</p>
+                <a href="{{ url_for('analyze') }}" class="upload-btn">
+                    <i class="fa-solid fa-upload"></i>
+                    Analyze Now
+                </a>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<script>
+function applyFilters() {
+    const type = document.getElementById('typeFilter').value;
+    const threat = document.getElementById('threatFilter').value;
+    
+    const url = new URL(window.location);
+    if (type !== 'all') url.searchParams.set('type', type);
+    if (threat !== 'all') url.searchParams.set('threat', threat);
+    
+    window.location = url.toString();
+}
+
+function resetFilters() {
+    document.getElementById('typeFilter').value = 'all';
+    document.getElementById('threatFilter').value = 'all';
+    window.location = '{{ url_for("history") }}';
+}
+</script>
+
+</body>
+
+</html>

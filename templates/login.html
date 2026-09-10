@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DeepFake Shield - Login</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Font Awesome for eye icon -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <!-- LEFT SIDE -->
+    <div class="left-panel">
+
+        <div class="brand">
+            <div class="shield-logo">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <span>DeepFake Shield</span>
+        </div>
+        
+        <h1>Multi-Modal GenAI Fraud Detection Pipeline</h1>
+
+        <p class="tagline">
+            Protecting digital identity with<br>
+            intelligent multi-modal AI
+        </p>
+
+        <p class="trusted">
+            SECURE • INTELLIGENT • RELIABLE
+        </p>
+
+    </div>
+
+
+    <!-- RIGHT SIDE -->
+    <div class="right-panel">
+
+        <div class="login-box">
+
+            <h2>Sign in</h2>
+
+            <p class="subtitle">
+                Enter your details below
+            </p>
+
+            <form id="loginForm">
+
+                <!-- EMAIL -->
+                <div class="input-group">
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Email *"
+                        required
+                    >
+                </div>
+
+
+                <!-- PASSWORD -->
+                <div class="input-group password-group">
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Password *"
+                        required
+                    >
+
+                    <i
+                        class="fa-regular fa-eye toggle-password"
+                        id="togglePassword">
+                    </i>
+
+                </div>
+
+
+                <!-- LOGIN BUTTON -->
+                <button type="submit" class="login-btn">
+                    Login
+                </button>
+
+            </form>
+
+
+            <!-- LINKS -->
+            <div class="links">
+
+                <a href="#">Forgot Password</a>
+
+                <a href="{{ url_for('signup') }}">Sign Up</a>
+
+                <a href="#">Help</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="{{url_for('static', filename='js/script.js')}}"></script>
+
+</body>
+</html>
