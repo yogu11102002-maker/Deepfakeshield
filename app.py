@@ -45,7 +45,9 @@ app.config['GOOGLE_REDIRECT_URI'] = os.environ.get(
     'GOOGLE_REDIRECT_URI', 'http://localhost:5000/login/google/callback'
 )
 app.config['PASSWORD_RESET_BASE_URL'] = os.environ.get(
-    'PASSWORD_RESET_BASE_URL', 'http://127.0.0.1:5000'
+    'PASSWORD_RESET_BASE_URL'
+) or os.environ.get(
+    'RENDER_EXTERNAL_URL', 'http://127.0.0.1:5000'
 )
 app.config['SMTP_HOST'] = os.environ.get('SMTP_HOST', '')
 app.config['SMTP_PORT'] = os.environ.get('SMTP_PORT', '587')
@@ -65,7 +67,9 @@ google = oauth.register(
 )
 
 # Image upload folder
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+UPLOAD_FOLDER = os.environ.get(
+    'UPLOAD_FOLDER', os.path.join(os.path.dirname(__file__), 'uploads')
+)
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -394,6 +398,11 @@ def home():
     if 'user_id' in session:
         user = db.session.get(User, session['user_id'])
     return render_template("home.html", user=user)
+
+
+@app.route('/healthz')
+def health_check():
+    return jsonify({'status': 'ok'}), 200
 
 
 @app.route("/login")

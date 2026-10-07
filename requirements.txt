@@ -14,3 +14,4 @@ imageio-ffmpeg>=0.6,<1
 scikit-learn>=1.6,<2
 realitydefender>=0.1,<1
 pytest>=8,<10
+gunicorn>=23,<24

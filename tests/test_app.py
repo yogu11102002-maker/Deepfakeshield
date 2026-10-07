@@ -23,6 +23,14 @@ def client():
         yield client
 
 
+def test_health_check_is_public(client):
+    with client.session_transaction() as session:
+        session.clear()
+    response = client.get('/healthz')
+    assert response.status_code == 200
+    assert response.json == {'status': 'ok'}
+
+
 def test_uncertain_survives_database_and_all_pages(client):
     response = client.post('/api/analyze', data={'text': 'too short'})
     assert response.status_code == 200

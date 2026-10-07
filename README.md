@@ -50,6 +50,21 @@ FFmpeg comes from `imageio-ffmpeg`; no hardcoded personal Windows path is needed
 The web server starts without loading models. CPU inference can be slow, notably
 for 32-frame videos. The development server is intended for local use.
 
+## Deploy to Render
+
+The root `render.yaml` defines a single-instance paid web service with a 10 GB
+persistent disk for SQLite, uploads, and downloaded model weights. It uses a
+2 CPU / 4 GB RAM plan because model inference is memory-intensive. A persistent
+disk prevents horizontal scaling and zero-downtime deploys; use managed Postgres
+and external object storage before scaling beyond one instance.
+
+After the repository is pushed to GitHub, create a Render Blueprint from that
+repository and review its paid service and disk resources before applying it.
+During setup, provide `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and
+`SMTP_FROM`; do not put SMTP credentials in Git. The public reset/verification
+URL is taken from Render's `RENDER_EXTERNAL_URL`. First model use downloads
+weights to the persistent disk, and CPU inference may take time.
+
 Password signup verification and password reset require SMTP settings in `.env`:
 `SMTP_HOST`, `SMTP_PORT`,
 `SMTP_USE_TLS` or `SMTP_USE_SSL`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`,
