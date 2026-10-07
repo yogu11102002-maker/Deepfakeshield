@@ -25,6 +25,13 @@ if (togglePasswordIcon && password) {
 
     });
 
+    togglePasswordIcon.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            togglePasswordIcon.click();
+        }
+    });
+
 }
 
 
@@ -122,7 +129,7 @@ if (signupForm) {
             const data = await response.json();
 
             if (data.success) {
-                alert("Account created successfully!");
+                alert(data.message || "Account created. Check your email to verify it.");
                 window.location.href = "/login";
             } else {
                 alert(data.message || "Registration failed.");
@@ -181,6 +188,7 @@ if (analyzeBtn) {
         const resultIcon = document.getElementById("resultIcon");
         const resultLabel = document.getElementById("resultLabel");
         const resultConfidence = document.getElementById("resultConfidence");
+        const resultMessage = document.getElementById("resultMessage");
 
         if (!file && !text) {
             alert("Please upload an image or paste some text first.");
@@ -214,7 +222,17 @@ if (analyzeBtn) {
 
             resultPanel.hidden = false;
 
-            if (data.is_threat) {
+            const status = typeof data.status === "string" ? data.status : "uncertain";
+            if (status === 'failed') {
+                resultPanel.className = "result-panel result-failed";
+                resultIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            } else if (status === 'conflict') {
+                resultPanel.className = "result-panel result-conflict";
+                resultIcon.innerHTML = '<i class="fa-solid fa-code-compare"></i>';
+            } else if (status === 'uncertain' || status === 'inconclusive') {
+                resultPanel.className = "result-panel result-uncertain";
+                resultIcon.innerHTML = '<i class="fa-solid fa-circle-question"></i>';
+            } else if (data.is_threat) {
                 resultPanel.className = "result-panel result-threat";
                 resultIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
             } else {
@@ -222,15 +240,47 @@ if (analyzeBtn) {
                 resultIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
             }
 
-            resultLabel.textContent = data.content_type.charAt(0).toUpperCase() + data.content_type.slice(1) + " result: " + data.label;
-            resultConfidence.textContent = "Confidence: " + data.confidence + "%" +
-                (data.frames_analyzed ? " (averaged across " + data.frames_analyzed + " video frames)" : "");
+            const safeText = value => typeof value === "string"
+                ? value.replace(/reality[\s_-]*defender/gi, "external detection service")
+                : "";
+            const contentType = safeText(data.content_type) || "Content";
+            const label = safeText(data.label) || "Inconclusive";
+            resultLabel.textContent = contentType.charAt(0).toUpperCase() + contentType.slice(1) + " result: " + label;
+            const deepseek = data.evidence && data.evidence.deepseek_review;
+            const deepseekText = deepseek && deepseek.status === "available"
+                ? "Visual review: " + safeText(deepseek.opinion)
+                : "";
+            const hasScore = data.fake_score != null && Number.isFinite(Number(data.fake_score));
+            const scoreText = hasScore
+                ? "Detection score: " + (Number(data.fake_score) * 100).toFixed(1) + "%. "
+                : "Detection score unavailable. ";
+            const warnings = Array.isArray(data.warnings)
+                ? data.warnings.map(safeText).filter(Boolean).join(" ")
+                : "";
+            const message = safeText(data.message);
+            if (resultMessage) resultMessage.textContent = message;
+            let videoText = "";
+            if (data.content_type === "video") {
+                const percent = value => value == null || !Number.isFinite(Number(value))
+                    ? "N/A"
+                    : (Number(value) * 100).toFixed(1) + "%";
+                const frameErrors = Array.isArray(data.frame_errors)
+                    ? data.frame_errors.map(item => safeText(item && item.error)).filter(Boolean)
+                    : [];
+                const details = [
+                    "Video verdict: " + (safeText(data.verdict) || (status === "failed" ? "Analysis failed" : "Inconclusive")),
+                    "Max frame score: " + percent(data.max_frame),
+                    "Fake frames: " + (Number.isFinite(Number(data.fake_frame_count)) ? Number(data.fake_frame_count) : "N/A"),
+                    "Audio score: " + percent(data.audio)
+                ];
+                if (safeText(data.audio_error)) details.push("Audio: " + safeText(data.audio_error));
+                if (frameErrors.length) details.push("Frame errors: " + frameErrors.join("; "));
+                videoText = details.join(". ") + ". ";
+            }
+            resultConfidence.textContent = "Detection engine: DeepFake Shield. " +
+                (data.content_type === "video" ? videoText : scoreText) + warnings +
+                (deepseekText ? " " + deepseekText : "");
 
-            // refresh the page shortly after so the stat cards & recent list
-            // reflect the newly saved analysis from the server
-            setTimeout(function () {
-                window.location.reload();
-            }, 1800);
 
         } catch (err) {
             alert("Something went wrong while analyzing. Please try again.");

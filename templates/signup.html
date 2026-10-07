@@ -1,161 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>DeepFake Shield - Sign Up</title>
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}">
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+    <title>Create Account - DeepFake Shield</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+<body class="signup-page">
+    <main class="signup-card">
+        <section class="signup-form-panel" aria-labelledby="signup-title">
+            <a class="signup-brand" href="{{ url_for('home') }}" aria-label="DeepFake Shield home">
+                <span class="signup-brand-mark"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+                <span>DeepFake <strong>Shield</strong></span>
+            </a>
 
-
-<body>
-
-<div class="login-container">
-
-    <!-- LEFT -->
-
-    <div class="left-panel">
-
-        <div class="brand">
-
-            <div class="shield-logo">
-                <i class="fa-solid fa-shield-halved"></i>
+            <div class="signup-intro">
+                <p class="signup-kicker">Create account</p>
+                <h1 id="signup-title">Your media.<br>Your peace of mind.</h1>
+                <p>Set up your secure workspace. Verify your email before signing in.</p>
             </div>
 
-            <span>DeepFake Shield</span>
-
-        </div>
-
-
-        <h1>
-            Create Your<br>
-            Secure Account
-        </h1>
-
-
-        <p class="tagline">
-
-            Join the intelligent platform
-            for digital content verification.
-
-        </p>
-
-
-        <p class="trusted">
-            SECURE • INTELLIGENT • RELIABLE
-        </p>
-
-    </div>
-
-
-    <!-- RIGHT -->
-
-    <div class="right-panel">
-
-        <div class="login-box signup-box">
-
-            <h2>Create account</h2>
-
-            <p class="subtitle">
-                Enter your details below
-            </p>
-
-
-            <form id="signupForm">
-
-
-                <div class="input-group">
-
-                    <input
-                        type="text"
-                        id="name"
-                        placeholder="Full Name *"
-                        required>
-
+            <form id="signupForm" class="signup-form">
+                <div class="signup-field">
+                    <label for="name">Full name</label>
+                    <input type="text" id="name" name="name" placeholder="e.g. Alex Morgan" autocomplete="name" required>
                 </div>
 
-
-                <div class="input-group">
-
-                    <input
-                        type="email"
-                        id="signupEmail"
-                        placeholder="Email *"
-                        required>
-
+                <div class="signup-field">
+                    <label for="signupEmail">Email address</label>
+                    <input type="email" id="signupEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
                 </div>
 
-
-                <div class="input-group password-group">
-
-                    <input
-                        type="password"
-                        id="signupPassword"
-                        placeholder="Password *"
-                        required>
-
-                    <i
-                        class="fa-regular fa-eye toggle-password"
-                        onclick="togglePassword('signupPassword', this)">
-                    </i>
-
+                <div class="signup-field password-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" name="password" placeholder="Create a password" autocomplete="new-password" required>
+                    <button class="signup-password-toggle" type="button" aria-label="Show password" onclick="togglePassword('signupPassword', this.querySelector('i'))">
+                        <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                    </button>
                 </div>
 
-
-                <div class="input-group password-group">
-
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        placeholder="Confirm Password *"
-                        required>
-
-                    <i
-                        class="fa-regular fa-eye toggle-password"
-                        onclick="togglePassword('confirmPassword', this)">
-                    </i>
-
+                <div class="signup-field password-group">
+                    <label for="confirmPassword">Confirm password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Enter it again" autocomplete="new-password" required>
+                    <button class="signup-password-toggle" type="button" aria-label="Show password" onclick="togglePassword('confirmPassword', this.querySelector('i'))">
+                        <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                    </button>
                 </div>
 
-
-                <button
-                    type="submit"
-                    class="login-btn">
-
-                    Create Account
-
+                <button type="submit" class="signup-submit">
+                    Create account <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </button>
-
             </form>
 
+            <div class="signup-divider"><span>or</span></div>
 
-            <div class="links signup-links">
+            <a class="signup-google" href="{{ url_for('google_login') }}">
+                <i class="fa-brands fa-google" aria-hidden="true"></i>
+                Continue with Google
+            </a>
 
-                <span>Already have an account?</span>
+            <p class="signup-login-link">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+        </section>
 
-                <a href="login.html">
-                    Login
-                </a>
-
+        <aside class="signup-visual" aria-label="DeepFake Shield identity analysis visual">
+            <img class="signup-portrait" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1400&q=85" alt="Portrait used to represent a media identity check">
+            <div class="signup-visual-shade"></div>
+            <div class="signup-visual-topline">
+                <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> DEEPFAKE SHIELD</span>
+                <span class="visual-live"><i aria-hidden="true"></i> IDENTITY SIGNALS</span>
             </div>
+            <div class="signup-scan-frame" aria-hidden="true">
+                <div class="signup-face-wireframe">
+                    <span class="face-eye face-eye-left"></span>
+                    <span class="face-eye face-eye-right"></span>
+                    <span class="face-nose"></span>
+                    <span class="face-mouth"></span>
+                    <span class="face-scan-grid"></span>
+                </div>
+                <span class="scan-corner scan-corner-tl"></span>
+                <span class="scan-corner scan-corner-tr"></span>
+                <span class="scan-corner scan-corner-bl"></span>
+                <span class="scan-corner scan-corner-br"></span>
+                <span class="scan-line"></span>
+            </div>
+            <div class="signup-visual-caption">
+                <p>LOOK CLOSER</p>
+                <h2>Trust what<br>you can verify.</h2>
+                <span class="visual-rule"></span>
+                <span class="visual-caption-foot">A clearer view of the media you share.</span>
+            </div>
+        </aside>
+    </main>
 
-        </div>
-
-    </div>
-
-</div>
-
-
-<script src="{{url_for('static', filename='js/script.js')}}"></script>
-
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
-
 </html>

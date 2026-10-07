@@ -99,7 +99,8 @@
             <select id="threatFilter" onchange="applyFilters()">
                 <option value="all">All</option>
                 <option value="threat">Threats Only</option>
-                <option value="safe">Safe Only</option>
+                <option value="uncertain">Inconclusive Only</option>
+                <option value="safe">Likely Authentic Only</option>
             </select>
         </div>
 
@@ -118,7 +119,7 @@
 
                 {% for item in analyses %}
 
-                <div class="history-card {{ 'threat' if item.is_threat else 'safe' }}">
+                <div class="history-card {{ 'uncertain' if item.status in ['uncertain', 'inconclusive'] else 'conflict' if item.status == 'conflict' else 'failed' if item.status == 'failed' else 'threat' if item.is_threat else 'safe' }}">
 
                     <!-- Thumbnail (for images) -->
                     {% if item.content_type == 'image' and item.image_path %}
@@ -126,7 +127,7 @@
                         <img src="{{ item.image_path }}" alt="Analysis">
                     </div>
                     {% else %}
-                    <div class="history-icon {{ 'threat' if item.is_threat else 'safe' }}">
+                    <div class="history-icon {{ 'uncertain' if item.status == 'uncertain' else 'threat' if item.is_threat else 'safe' }}">
                         {% if item.content_type == 'image' %}
                             <i class="fa-solid fa-image"></i>
                         {% elif item.content_type == 'video' %}
@@ -148,17 +149,35 @@
 
                         <div class="history-details">
                             <p><strong>Result:</strong> {{ item.label }}</p>
-                            <p><strong>Confidence:</strong> {{ item.confidence }}%</p>
+                            {% if item.content_type == 'video' %}
+                            <p><strong>Video verdict:</strong> {{ 'Analysis failed' if item.status == 'failed' else item.video_details.get('verdict') or 'Inconclusive' }}</p>
+                            <p><strong>Max frame score:</strong> {{ (item.video_details.get('max_frame') * 100)|round(2) if item.video_details.get('max_frame') is not none else 'N/A' }}%</p>
+                            <p><strong>Fake frames:</strong> {{ item.video_details.get('fake_frame_count') if item.video_details.get('fake_frame_count') is not none else 'N/A' }}</p>
+                            <p><strong>Audio score:</strong> {{ (item.video_details.get('audio') * 100)|round(2) if item.video_details.get('audio') is not none else 'N/A' }}%</p>
+                            {% if item.video_details.get('analysis_error') %}<p>{{ item.video_details.get('analysis_error') }}</p>{% endif %}
+                            {% if item.video_details.get('audio_error') %}<p>Audio: {{ item.video_details.get('audio_error') }}</p>{% endif %}
+                            {% for frame_error in item.video_details.get('frame_errors', []) %}<p>Frame {{ frame_error.get('timestamp', '') }}: {{ frame_error.get('error', 'Frame analysis failed') }}</p>{% endfor %}
+                            {% else %}
+                            <p><strong>Detection score:</strong> {{ (item.synthetic_score * 100)|round(2) if item.synthetic_score is not none else 'N/A' }}%</p>
+                            {% endif %}
+                            <p><strong>Detection engine:</strong> DeepFake Shield</p>
+                            {% for warning in item.warnings %}<p>{{ warning }}</p>{% endfor %}
                             <p><strong>Date:</strong> {{ item.created_at.strftime('%d %b %Y, %H:%M') }}</p>
                         </div>
 
                         <div class="history-status">
-                            {% if item.is_threat %}
+                            {% if item.status == 'failed' %}
+                                <span class="status-badge failed">Analysis failed</span>
+                            {% elif item.status == 'conflict' %}
+                                <span class="status-badge conflict">Conflict</span>
+                            {% elif item.status in ['uncertain', 'inconclusive'] %}
+                                <span class="status-badge uncertain">Inconclusive</span>
+                            {% elif item.is_threat %}
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span>Potential Threat</span>
+                                <span>Likely Synthetic</span>
                             {% else %}
                                 <i class="fa-solid fa-circle-check"></i>
-                                <span>Safe Content</span>
+                                <span>Likely Authentic</span>
                             {% endif %}
                         </div>
                     </div>

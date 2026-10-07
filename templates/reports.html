@@ -99,8 +99,8 @@
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             <div>
-                <p>Safe Content</p>
-                <h2>{{ safe }}</h2>
+                <p>Likely Authentic</p>
+                <h2>{{ safe }}</h2><small>{{ uncertain }} inconclusive results excluded</small>
             </div>
         </div>
 
@@ -109,7 +109,7 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div>
-                <p>Threats Detected</p>
+                <p>Flagged Results</p>
                 <h2>{{ threats }}</h2>
             </div>
         </div>
@@ -119,7 +119,7 @@
                 <i class="fa-solid fa-percent"></i>
             </div>
             <div>
-                <p>Avg Confidence</p>
+                <p>Average Confidence</p>
                 <h2>{{ avg_confidence }}%</h2>
             </div>
         </div>
@@ -183,13 +183,14 @@
                             <th>Type</th>
                             <th>Source</th>
                             <th>Result</th>
-                            <th>Confidence</th>
+                            <th>Detection score</th>
+                            <th>Audio score</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in analyses %}
-                        <tr class="{{ 'threat-row' if item.is_threat else 'safe-row' }}">
+                        <tr class="{{ 'uncertain-row' if item.status in ['uncertain', 'inconclusive'] else 'conflict-row' if item.status == 'conflict' else 'failed-row' if item.status == 'failed' else 'threat-row' if item.is_threat else 'safe-row' }}">
                             <td>{{ item.created_at.strftime('%d %b %Y, %H:%M') }}</td>
                             <td>
                                 <span class="badge">{{ item.content_type|capitalize }}</span>
@@ -197,13 +198,30 @@
                             <td>{{ item.source_name[:50] }}</td>
                             <td>{{ item.label }}</td>
                             <td>
+                                {% if item.content_type == 'video' %}
+                                {{ (item.video_details.get('max_frame') * 100)|round(2) if item.video_details.get('max_frame') is not none else 'N/A' }}%
+                                {% else %}
                                 <div class="confidence-bar">
-                                    <div class="confidence-fill" style="width: {{ item.confidence }}%"></div>
+                                    <div class="confidence-fill"></div>
                                 </div>
-                                {{ item.confidence }}%
+                                {{ (item.synthetic_score * 100)|round(2) if item.synthetic_score is not none else 'N/A' }}%
+                                {% endif %}
                             </td>
                             <td>
-                                {% if item.is_threat %}
+                                {% if item.content_type == 'video' %}
+                                {{ (item.video_details.get('audio') * 100)|round(2) if item.video_details.get('audio') is not none else 'N/A' }}%
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.status == 'failed' %}
+                                <span class="status-badge failed">Analysis failed</span>
+                            {% elif item.status == 'conflict' %}
+                                <span class="status-badge conflict">Conflict</span>
+                            {% elif item.status in ['uncertain', 'inconclusive'] %}
+                                <span class="status-badge uncertain">Inconclusive</span>
+                            {% elif item.is_threat %}
                                     <span class="status-badge threat">
                                         <i class="fa-solid fa-triangle-exclamation"></i>
                                         Threat
@@ -211,7 +229,7 @@
                                 {% else %}
                                     <span class="status-badge safe">
                                         <i class="fa-solid fa-circle-check"></i>
-                                        Safe
+                                        Likely authentic
                                     </span>
                                 {% endif %}
                             </td>

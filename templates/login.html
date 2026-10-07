@@ -3,116 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>DeepFake Shield - Login</title>
+    <title>Sign In - DeepFake Shield</title>
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}">
-
-    <!-- Font Awesome for eye icon -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+<body class="signup-page login-page">
+    <main class="signup-card login-auth-card">
+        <section class="signup-form-panel" aria-labelledby="login-title">
+            <a class="signup-brand" href="{{ url_for('home') }}" aria-label="DeepFake Shield home">
+                <span class="signup-brand-mark"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+                <span>DeepFake <strong>Shield</strong></span>
+            </a>
 
-<body>
-
-<div class="login-container">
-
-    <!-- LEFT SIDE -->
-    <div class="left-panel">
-
-        <div class="brand">
-            <div class="shield-logo">
-                <i class="fa-solid fa-shield-halved"></i>
+            <div class="signup-intro">
+                <p class="signup-kicker">Welcome back</p>
+                <h1 id="login-title">Sign in to<br>your workspace.</h1>
+                <p>Continue protecting the media you care about.</p>
             </div>
 
-            <span>DeepFake Shield</span>
-        </div>
-        
-        <h1>Multi-Modal GenAI Fraud Detection Pipeline</h1>
+            {% with auth_messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in auth_messages %}
+                <p class="login-auth-message" role="alert">{{ message }}</p>
+                {% endfor %}
+            {% endwith %}
 
-        <p class="tagline">
-            Protecting digital identity with<br>
-            intelligent multi-modal AI
-        </p>
-
-        <p class="trusted">
-            SECURE • INTELLIGENT • RELIABLE
-        </p>
-
-    </div>
-
-
-    <!-- RIGHT SIDE -->
-    <div class="right-panel">
-
-        <div class="login-box">
-
-            <h2>Sign in</h2>
-
-            <p class="subtitle">
-                Enter your details below
-            </p>
-
-            <form id="loginForm">
-
-                <!-- EMAIL -->
-                <div class="input-group">
-                    <input
-                        type="email"
-                        id="email"
-                        placeholder="Email *"
-                        required
-                    >
+            <form id="loginForm" class="signup-form">
+                <div class="signup-field">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
                 </div>
 
-
-                <!-- PASSWORD -->
-                <div class="input-group password-group">
-
-                    <input
-                        type="password"
-                        id="password"
-                        placeholder="Password *"
-                        required
-                    >
-
-                    <i
-                        class="fa-regular fa-eye toggle-password"
-                        id="togglePassword">
-                    </i>
-
+                <div class="signup-field login-password-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+                    <i class="fa-regular fa-eye" id="togglePassword" role="button" tabindex="0" aria-label="Show password"></i>
                 </div>
 
-
-                <!-- LOGIN BUTTON -->
-                <button type="submit" class="login-btn">
-                    Login
-                </button>
-
+                <button type="submit" class="signup-submit">Sign in <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
             </form>
 
+            <div class="signup-divider"><span>or</span></div>
 
-            <!-- LINKS -->
-            <div class="links">
+            <a class="signup-google" href="{{ url_for('google_login') }}">
+                <i class="fa-brands fa-google" aria-hidden="true"></i>
+                Continue with Google
+            </a>
 
-                <a href="#">Forgot Password</a>
-
-                <a href="{{ url_for('signup') }}">Sign Up</a>
-
-                <a href="#">Help</a>
-
+            <div class="login-secondary-links">
+                <a href="{{ url_for('forgot_password') }}">Forgot password?</a>
+                <a href="{{ url_for('resend_verification') }}">Resend email verification</a>
+                <span>New to DeepFake Shield? <a href="{{ url_for('signup') }}">Create account</a></span>
             </div>
+        </section>
 
-        </div>
+        <aside class="signup-visual login-visual" aria-label="DeepFake Shield overview">
+            <img class="signup-portrait" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1400&q=85" alt="Portrait representing media identity analysis">
+            <div class="signup-visual-shade"></div>
+            <div class="signup-visual-topline">
+                <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> DEEPFAKE SHIELD</span>
+                <span class="visual-live"><i aria-hidden="true"></i> IDENTITY SIGNALS</span>
+            </div>
+            <div class="signup-scan-frame" aria-hidden="true">
+                <div class="signup-face-wireframe">
+                    <span class="face-eye face-eye-left"></span>
+                    <span class="face-eye face-eye-right"></span>
+                    <span class="face-nose"></span>
+                    <span class="face-mouth"></span>
+                    <span class="face-scan-grid"></span>
+                </div>
+                <span class="scan-corner scan-corner-tl"></span>
+                <span class="scan-corner scan-corner-tr"></span>
+                <span class="scan-corner scan-corner-bl"></span>
+                <span class="scan-corner scan-corner-br"></span>
+                <span class="scan-line"></span>
+            </div>
+            <div class="signup-visual-caption login-visual-caption">
+                <p class="login-visual-kicker">SECURE • INTELLIGENT • RELIABLE</p>
+                <h2>Multi-Modal GenAI Fraud Detection Pipeline</h2>
+                <p class="login-visual-tagline">Protecting digital identity with<br>intelligent multi-modal AI</p>
+            </div>
+        </aside>
+    </main>
 
-    </div>
-
-</div>
-
-
-<script src="{{url_for('static', filename='js/script.js')}}"></script>
-
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

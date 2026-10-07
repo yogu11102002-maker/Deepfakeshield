@@ -154,9 +154,9 @@
 
             <div>
 
-                <p>Safe Content</p>
+                <p>Likely Authentic</p>
 
-                <h2 id="statSafe">{{ safe }}</h2>
+                <h2 id="statSafe">{{ safe }}</h2><small>{{ uncertain }} inconclusive results excluded</small>
 
             </div>
 
@@ -171,7 +171,7 @@
 
             <div>
 
-                <p>Threats Detected</p>
+                <p>Flagged Results</p>
 
                 <h2 id="statThreats">{{ threats }}</h2>
 
@@ -188,7 +188,7 @@
 
             <div>
 
-                <p>Protection Score</p>
+                <p>Likely Authentic Share</p>
 
                 <h2 id="statScore">{{ protection_score }}%</h2>
 
@@ -322,13 +322,13 @@
 
                 <div class="recent-item">
 
-                    <div class="recent-item-icon {{ 'threat' if item.is_threat else 'safe' }}">
-                        <i class="fa-solid {{ 'fa-triangle-exclamation' if item.is_threat else 'fa-circle-check' }}"></i>
+                    <div class="recent-item-icon {{ 'uncertain' if item.status in ['uncertain', 'inconclusive'] else 'conflict' if item.status == 'conflict' else 'failed' if item.status == 'failed' else 'threat' if item.is_threat else 'safe' }}">
+                        <i class="fa-solid {{ 'fa-circle-question' if item.status in ['uncertain', 'inconclusive'] else 'fa-triangle-exclamation' if item.is_threat or item.status == 'failed' else 'fa-code-compare' if item.status == 'conflict' else 'fa-circle-check' }}"></i>
                     </div>
 
                     <div class="recent-item-body">
                         <strong>{{ item.source_name }}</strong>
-                        <small>{{ item.content_type|capitalize }} &middot; {{ item.label }} &middot; {{ item.confidence }}% confidence</small>
+                        <small>{{ item.content_type|capitalize }} &middot; {{ item.label }} &middot; {{ (item.synthetic_score * 100)|round(2) if item.synthetic_score is not none else 'N/A' }}% detection score{% if item.content_type == 'video' %} &middot; Audio {{ (item.video_details.get('audio') * 100)|round(2) if item.video_details.get('audio') is not none else 'N/A' }}%{% endif %}</small>
                     </div>
 
                     <span class="recent-item-time">

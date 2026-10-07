@@ -1,19 +1,73 @@
+# Secrets
+
+.env
+.env.*
+!.env.example
+client_secret_*.json
+
+# Python
+
+**pycache**/
+*.py[cod]
+*.db
 env/
 venv/
 .venv/
-.env
-
-__pycache__/
-*.pyc
-*.db
 instance/
-uploads/
 
+# IDE and caches
+
+.vscode/
+.cache/
+.pytest_cache/
+.hf_cache_test/
+.hf_test_download/
+
+# Generated files
+
+uploads/
 confusion_matrix_*.png
 *.pkl
-.vscode/
+smoke-results.json
+evaluation.json
+thresholds.json
+
+# Test media
 
 test_data/audio/*
 !test_data/audio/DATASET-balanced.csv
 test_data/video/
 test_data/image/
+
+# Local test media
+*.mp4
+*.wav
+*.jpg
+
+# Local test result files
+image-results.json
+new-image-results.json
+new-dataset-results.json
+video-results.json
+smoke-results.before-run.json
+smoke-results.pre-audio-fix.json
+audio_test.csv
+image_test.csv
+new_image_test.csv
+test.csv
+video_test.csv
+candidate-benchmark-output.txt
+
+# Local debug/test scripts
+check_video.py
+debug_video.py
+make_media_csv.py
+test_rd.py
+test_vedio.py
+test_sample.txt
+
+# Local test data
+test_data/text/AI_Human.csv
+
+# Accidental local file
+tatus --short

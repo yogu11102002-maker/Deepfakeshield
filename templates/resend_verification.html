@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - DeepFake Shield</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="signup-page login-page">
+    <main class="signup-card login-auth-card">
+        <section class="signup-form-panel" aria-labelledby="verify-email-title">
+            <a class="signup-brand" href="{{ url_for('home') }}" aria-label="DeepFake Shield home">
+                <span class="signup-brand-mark"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+                <span>DeepFake <strong>Shield</strong></span>
+            </a>
+            <div class="signup-intro">
+                <p class="signup-kicker">Account verification</p>
+                <h1 id="verify-email-title">Verify your email.</h1>
+                <p>Enter your address and we’ll send a fresh verification link.</p>
+            </div>
+
+            {% with auth_messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in auth_messages %}
+                <p class="login-auth-message" role="alert">{{ message }}</p>
+                {% endfor %}
+            {% endwith %}
+
+            {% if not mail_configured %}
+            <p class="login-auth-message" role="status">Email delivery is not configured yet.</p>
+            {% endif %}
+
+            <form method="post" class="signup-form">
+                <div class="signup-field">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" autocomplete="email" required>
+                </div>
+                <button type="submit" class="signup-submit" {% if not mail_configured %}disabled{% endif %}>
+                    Send verification link
+                </button>
+            </form>
+
+            <div class="login-secondary-links">
+                <a href="{{ url_for('login') }}">Back to sign in</a>
+            </div>
+        </section>
+        <aside class="signup-visual login-visual" aria-label="DeepFake Shield email verification">
+            <div class="signup-visual-shade"></div>
+            <div class="signup-visual-topline"><span>DEEPFAKE SHIELD</span><span>EMAIL VERIFICATION</span></div>
+            <div class="signup-visual-caption login-visual-caption">
+                <p class="login-visual-kicker">SECURE ACCOUNT ACCESS</p>
+                <h2>Prove you own the address.</h2>
+                <p class="login-visual-tagline">Verification links expire after 24 hours.</p>
+            </div>
+        </aside>
+    </main>
+</body>
+</html>
