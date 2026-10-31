@@ -53,13 +53,25 @@ for 32-frame videos. The development server is intended for local use.
 ## Deploy to Render
 
 The root `render.yaml` defines a single-instance paid web service with a 10 GB
-persistent disk for SQLite, uploads, and downloaded model weights. It uses a
-2 CPU / 4 GB RAM plan because model inference is memory-intensive. A persistent
-disk prevents horizontal scaling and zero-downtime deploys; use managed Postgres
-and external object storage before scaling beyond one instance.
+persistent disk for uploads and downloaded model weights. It uses a 2 CPU / 4 GB
+RAM plan because model inference is memory-intensive. Set `DATABASE_URL` in the
+Render dashboard to the internal connection string of a managed PostgreSQL
+database. The app uses psycopg for PostgreSQL and defaults to SQLite locally.
+A persistent disk prevents horizontal scaling and zero-downtime deploys; use
+external object storage before scaling beyond one instance.
 
 After the repository is pushed to GitHub, create a Render Blueprint from that
 repository and review its paid service and disk resources before applying it.
+Create or select a PostgreSQL database in the same Render region, copy its
+internal connection string, and set it as the web service's `DATABASE_URL`.
+For Google sign-in, set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` on the
+Render service. In Google Cloud Console, add
+`https://<your-render-service>.onrender.com/login/google/callback` as an
+authorized redirect URI. The app builds this URI from Render's
+`RENDER_EXTERNAL_URL`; if setting `GOOGLE_REDIRECT_URI` manually, it must match
+the public service URL and the Google Console entry exactly.
+Changing from SQLite creates a new, empty PostgreSQL database; migrate existing
+users and analyses separately if they need to be retained. Back up SQLite first.
 During setup, provide `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and
 `SMTP_FROM`; do not put SMTP credentials in Git. The public reset/verification
 URL is taken from Render's `RENDER_EXTERNAL_URL`. First model use downloads

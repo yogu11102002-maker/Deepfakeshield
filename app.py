@@ -9,7 +9,7 @@ import urllib.request
 import secrets
 import math
 from email.message import EmailMessage
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
 from authlib.integrations.flask_client import OAuth
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -34,16 +34,31 @@ load_dotenv()
 REALITY_DEFENDER_FAKE_THRESHOLD = 0.5
 REALITY_DEFENDER_REAL_THRESHOLD = 0.3
 
+
+def _google_redirect_uri():
+    configured_uri = os.environ.get('GOOGLE_REDIRECT_URI')
+    render_url = os.environ.get('RENDER_EXTERNAL_URL', '').rstrip('/')
+    if configured_uri:
+        configured_host = urlsplit(configured_uri).hostname
+        if not (render_url and configured_host in {'localhost', '127.0.0.1', '::1'}):
+            return configured_uri
+    if render_url:
+        return f'{render_url}/login/google/callback'
+    return 'http://localhost:5000/login/google/callback'
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-this')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
+if database_url.startswith(('postgres://', 'postgresql://')):
+    database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+    database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100 MB upload limit (videos are bigger)
 app.config['GOOGLE_CLIENT_ID'] = os.environ.get('GOOGLE_CLIENT_ID')
 app.config['GOOGLE_CLIENT_SECRET'] = os.environ.get('GOOGLE_CLIENT_SECRET')
-app.config['GOOGLE_REDIRECT_URI'] = os.environ.get(
-    'GOOGLE_REDIRECT_URI', 'http://localhost:5000/login/google/callback'
-)
+app.config['GOOGLE_REDIRECT_URI'] = _google_redirect_uri()
 app.config['PASSWORD_RESET_BASE_URL'] = os.environ.get(
     'PASSWORD_RESET_BASE_URL'
 ) or os.environ.get(
@@ -583,6 +598,7 @@ def reset_password(token):
 
 @app.route("/login/google")
 def google_login():
+    logging.info("Google OAuth redirect URI: %s", app.config['GOOGLE_REDIRECT_URI'])
     if not app.config.get('GOOGLE_CLIENT_ID') or not app.config.get('GOOGLE_CLIENT_SECRET'):
         flash("Google sign-in is not configured. Add its credentials to .env.", "error")
         return redirect(url_for('login'))
@@ -1103,7 +1119,7 @@ with app.app_context():
         db.session.commit()
     if 'email_verified' not in user_columns:
         db.session.execute(sql_text(
-            'ALTER TABLE "user" ADD COLUMN email_verified BOOLEAN NOT NULL DEFAULT 0'
+            'ALTER TABLE "user" ADD COLUMN email_verified BOOLEAN NOT NULL DEFAULT FALSE'
         ))
         db.session.commit()
     if 'email_verification_token_hash' not in user_columns:

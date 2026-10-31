@@ -235,6 +235,33 @@ def test_google_login_button_and_local_callback(client, monkeypatch):
     assert '/login/google/callback' in {rule.rule for rule in web.app.url_map.iter_rules()}
 
 
+def test_google_redirect_uri_uses_render_external_url(monkeypatch):
+    monkeypatch.delenv('GOOGLE_REDIRECT_URI', raising=False)
+    monkeypatch.setenv('RENDER_EXTERNAL_URL', 'https://deepfake-shield.onrender.com/')
+
+    assert web._google_redirect_uri() == (
+        'https://deepfake-shield.onrender.com/login/google/callback'
+    )
+
+
+def test_google_redirect_uri_prefers_explicit_override(monkeypatch):
+    monkeypatch.setenv('GOOGLE_REDIRECT_URI', 'https://custom.example.com/google/callback')
+    monkeypatch.setenv('RENDER_EXTERNAL_URL', 'https://deepfake-shield.onrender.com')
+
+    assert web._google_redirect_uri() == 'https://custom.example.com/google/callback'
+
+
+def test_google_redirect_uri_ignores_local_override_on_render(monkeypatch):
+    monkeypatch.setenv(
+        'GOOGLE_REDIRECT_URI', 'http://localhost:5000/login/google/callback'
+    )
+    monkeypatch.setenv('RENDER_EXTERNAL_URL', 'https://deepfake-shield.onrender.com')
+
+    assert web._google_redirect_uri() == (
+        'https://deepfake-shield.onrender.com/login/google/callback'
+    )
+
+
 def test_google_links_existing_user_by_verified_email(client, monkeypatch):
     identity = {
         'sub': 'google-subject-123',
